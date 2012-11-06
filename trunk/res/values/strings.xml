@@ -4,4 +4,11 @@
     <string name="app_description">Pampero Realidad Aumentada</string>
     <string name="pampero">PAMPERO</string>
     <string name="camara">Camara</string>
+    <string name="content1">Rito de Consumo</string>
+    <string name="content2">Como se sirven los tragos</string>
+    <string name="content3">Descubre el Codigo</string>
+    <string name="content4">Saludo Secreto</string>
+    <string name="content5">Elaboracion del Ron</string>
+    <string name="content6">Sliding Puzzle</string>
+   
 </resources>

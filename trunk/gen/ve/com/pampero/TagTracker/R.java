@@ -17,23 +17,21 @@ public final class R {
         public static final int abstract_backgorund_portait=0x7f020000;
         public static final int abstract_background_landscape=0x7f020001;
         public static final int background_portrait=0x7f020002;
-        public static final int content_1=0x7f020003;
-        public static final int content_2=0x7f020004;
-        public static final int content_3=0x7f020005;
-        public static final int content_4=0x7f020006;
-        public static final int content_5=0x7f020007;
-        public static final int content_6=0x7f020008;
-        public static final int pampero_1=0x7f020009;
-        public static final int pampero_icon=0x7f02000a;
+        public static final int content=0x7f020003;
+        public static final int facebook=0x7f020004;
+        public static final int pampero_icon=0x7f020005;
+        public static final int twitter=0x7f020006;
     }
     public static final class id {
         public static final int activar=0x7f050000;
-        public static final int content_1=0x7f050001;
-        public static final int content_2=0x7f050002;
-        public static final int content_3=0x7f050003;
-        public static final int content_4=0x7f050004;
-        public static final int content_5=0x7f050005;
-        public static final int content_6=0x7f050006;
+        public static final int button1=0x7f050003;
+        public static final int button2=0x7f050004;
+        public static final int button3=0x7f050005;
+        public static final int button4=0x7f050006;
+        public static final int button5=0x7f050007;
+        public static final int button6=0x7f050008;
+        public static final int imageView1=0x7f050001;
+        public static final int imageView2=0x7f050002;
     }
     public static final class layout {
         public static final int main=0x7f030000;
@@ -42,6 +40,12 @@ public final class R {
         public static final int app_description=0x7f060001;
         public static final int app_name=0x7f060000;
         public static final int camara=0x7f060003;
+        public static final int content1=0x7f060004;
+        public static final int content2=0x7f060005;
+        public static final int content3=0x7f060006;
+        public static final int content4=0x7f060007;
+        public static final int content5=0x7f060008;
+        public static final int content6=0x7f060009;
         public static final int pampero=0x7f060002;
     }
 }

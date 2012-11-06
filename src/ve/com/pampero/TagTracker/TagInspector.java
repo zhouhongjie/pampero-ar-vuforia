@@ -18,12 +18,8 @@ import android.widget.ImageView;
 import com.qualcomm.QCAR.QCAR;
 //import com.qualcomm.QCARSamples.ImageTargets.*;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Jose Manuel Aguirre
- * Date: 28/10/12
- * Time: 11:16 AM
- * To change this template use File | Settings | File Templates.
+/* CLASE PRINCIPAL TagInspector.java
+ * AQUI SE REALIZA LA INICIALIZACION DE TODOS LOS COMPONENTES QUE UTILIZA VUFORIA
  */
 public class TagInspector extends Activity {
     private static final String NATIVE_LIB_QCAR = "QCAR";
@@ -49,6 +45,9 @@ public class TagInspector extends Activity {
     private int screenWidth = 0;
     private int screenHeight = 0;
 
+    /*
+     *METODO PARA OBTENER LA PANATALLA INICIAL DE LA APLICACION 
+     */
     public ImageView getInitialScreen() {
         return initialScreen;
     }
@@ -65,6 +64,12 @@ public class TagInspector extends Activity {
 
     private int backgroundImage = 0;
 
+    
+    /*
+     * BLOQUE ESTATICO QUE SE EJECUTARA UNA VEZ INICIADA LA ACTIVIDAD
+     * EN ESTE BLOQUE SE CARGAN LAS LIBRERIAS COMPILADAS EN C++
+     * DE QUALCOMM AUGMENTED REALITY (QCAR) Y LIBRERIAS PROPIAS DE LA APLICACION (Pampero) 
+     */
     static
     {
         LoggerPrint.INFO("Loading Library: " + NATIVE_LIB_QCAR);
@@ -72,31 +77,42 @@ public class TagInspector extends Activity {
         LoggerPrint.INFO("Loading Library: " + NATIVE_LIB_PAMPERO);
         loadLibrary(NATIVE_LIB_PAMPERO);
     }
+    
+    /*
+     * METODO DE INICIO. ESTE METODO SE EJECUTA AL INICIAR LA APLICACION DESDE EL DISPOSITIVO
+     */
+    
     protected void onCreate(Bundle savedInstanceState){
         LoggerPrint.INFO("Starting method: TagInspector.onCreate()");
         super.onCreate(savedInstanceState);
-        LoggerPrint.INFO(TagInspector.class.getName() + ".OnCreate - Getting Initialization flags");
+        LoggerPrint.INFO(TagInspector.class.getName() + ".OnCreate - Getting Initialization flags");        
         backgroundImage = R.drawable.abstract_backgorund_portait;
+        // OBTENIENDO LOS FLAGS DE VERSION DE OPENGL PARA QCAR
         QCARFlags = getInitializationFlags();
         updateApplicationStatus(INIT_APP_STATUS);
     }
-
+    
+    /*
+     * METODO PARA MODIFICAR EL ESTADO DE LA APLICAICON
+     */
     private synchronized void updateApplicationStatus(int status){
         if (CURRENT_STATUS == status){
             return;
         }
 
-        CURRENT_STATUS = status;
-
+        CURRENT_STATUS = status;        
+        
         switch(CURRENT_STATUS){
             case INIT_APP_STATUS:
                 LoggerPrint.INFO(TagInspector.class.getName() + ".updateApplicationStatus - CURRENT STATUS: " + CURRENT_STATUS );
+                //SE REALIZAN CONFIGURACIONES INICIALES PARA LA APLICACION
                 initApplication();
                 updateApplicationStatus(INIT_QCAR_STATUS);
             break;
             case INIT_QCAR_STATUS:
                 try
                 {
+                	//SE INICIALIZA EL COMPONENTE QCAR
                     initQCARTask = new InitQCARTask();
                     initQCARTask.execute();
                 }
@@ -106,15 +122,18 @@ public class TagInspector extends Activity {
                 }
             break;
             case INIT_TRACKER_STATUS:
+            	//SE INICIALIZA EL TRACKER
                 if(NativeInterfaceCaller.initTracker() > 0){
                     updateApplicationStatus(INIT_APP_AR_STATUS);
                 }
             break;
             case INIT_APP_AR_STATUS:
+            	//SE INICIAN LOS COMPONENTES PARA EL RENDERIZADO
                 initApplicationAR();
                 updateApplicationStatus(LOAD_TRACKER_STATUS);
             break;
             case LOAD_TRACKER_STATUS:
+            	//SE CARGA LA INFORMACION DE LAS IMAGENES AL TRACKER 
                 try{
                     loadTracker = new LoadTracker();
                     loadTracker.execute();
@@ -123,6 +142,7 @@ public class TagInspector extends Activity {
                 }
             break;
             case APP_INITIATED_STATUS:
+            	//GARBAGE COLLECTOR PERFORM
                 System.gc();
 
                 // Native post initialization:
@@ -135,9 +155,11 @@ public class TagInspector extends Activity {
                 if (screenStartTime < MIN_FIRST_SCREEN_TIME){
                     newStartScreenTime = MIN_FIRST_SCREEN_TIME - screenStartTime;
                 }
-
+                
+                //SE INICIALIZA EL HANDLER PARA MANEJAR LOS CAMBIOS Y ACCIONES REFERENTES AL RENDERIZADO
                 initialScreenHandler = new Handler();
                 //mRenderer._TagInspector=this;
+                //SE INICIALIZA LA SUPERFICIE DE RENDERIZADO
                 initialScreenRunnable = new Runnable() {
 
                     public void run() {
@@ -159,10 +181,12 @@ public class TagInspector extends Activity {
                 initialScreenHandler.postDelayed(initialScreenRunnable, newStartScreenTime);
             break;
             case START_CAMERA:
+            	//SE INICIALIZA LA CAMARA
                 NativeInterfaceCaller.startCamera();
                 NativeInterfaceCaller.setProjectionMatrix();
             break;
             case STOP_CAMERA:
+            	//HACE UN STOP DE LA CAMARA
                 NativeInterfaceCaller.stopCamera();
                 break;
             default:
@@ -188,20 +212,37 @@ public class TagInspector extends Activity {
 
     private void initApplication(){
         LoggerPrint.INFO(TagInspector.class.getName() + ".initApplication - setting screen orientation");
+        /*
+         *  SE SETEA LA ORIENTACION DE LA PANTALLA
+         *  PORTRAIT = VERTICAL
+         *  LANDSCAPE = HORIZONTAL
+         */
         int screenOrientation = ActivityInfo.SCREEN_ORIENTATION_PORTRAIT;
         setRequestedOrientation(screenOrientation);
-
+        
+        /*
+         * SETEA EL VALOR isInPotraitMode EN LA CLASE NATIVA DE Pampero
+         */
         LoggerPrint.INFO(TagInspector.class.getName() + ".initApplication - setting activity portrait mode");
         NativeInterfaceCaller.setActivityPortraitMode(screenOrientation == ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-
+        
+        /*
+         * SE ALMACENAN LOS VALORES DE LA DIMENSION DE LA PANTALLA DEL DISPOSITIVO
+         */
         LoggerPrint.INFO(TagInspector.class.getName() + ".initApplication - storing screen dimensions");
         storeScreenDimensions();
-
+        
+        /*
+         * SE SETEA QUE LA PANTALLA SE MANTENGA ACTIVA E ILUMINADA DURANTE LA EJECUCION DE LA APLICACION
+         */
         LoggerPrint.INFO(TagInspector.class.getName() + ".initApplication - setting screen options");
         getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON,
                 WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
 
+        /*
+         * SE LEVANTA LA IMAGEN DE INICIO 
+         */
         LoggerPrint.INFO(TagInspector.class.getName() + ".initApplication - adding ImageView");
         initialScreen = new ImageView(this);
         initialScreen.setImageResource(backgroundImage);
@@ -234,6 +275,9 @@ public class TagInspector extends Activity {
         System.loadLibrary(libName);
     }
 
+    /*
+     * CLASE PARA LA INICIALIZACION DEL COMPONENTE QCAR
+     */
     private class InitQCARTask2 extends AsyncTask<Void, Integer, Boolean> {
 
         @Override
@@ -248,6 +292,7 @@ public class TagInspector extends Activity {
         protected Boolean doInBackground(Void... params){
             // Prevent the onDestroy() method to overlap with initialization:
             synchronized (shutdownLock){
+            	//SE INICIALIZA EL COMPONENTE QCAR CON LOS PARAMETROS NECESARIOS
                 QCAR.setInitParameters(TagInspector.this, QCARFlags);
                 do{
                     mProgressValue = QCAR.init();
@@ -300,13 +345,16 @@ public class TagInspector extends Activity {
             }
         }
     }
-
+    
+    /*
+     * CLASE PARA LA CARGA DE LAS IMAGENES TRACKEADAS (.XML .DAT) AL TRACKER
+     */
     /** An async task to load the tracker data asynchronously. */
     private class LoadTracker extends AsyncTask<Void, Integer, Boolean>{
         protected Boolean doInBackground(Void... params){
             // Prevent the onDestroy() method to overlap:
             synchronized (shutdownLock){
-                // Load the tracker data set:
+                // SE CARGA LA INFORMACION DE LAS IMAGENES CON EL METODO NATIVO loadTrackerData()            	
                 return (NativeInterfaceCaller.loadTrackerData() > 0);
             }
         }
@@ -336,6 +384,10 @@ public class TagInspector extends Activity {
         }
     }
 
+    /*
+     * ESTE METODO SE EJECUTA AL MOMENTO QUE LA APLICACION ESTA EN SEGUNDO PLANO Y SE VUELVE
+     * A COLOCAR EN PRIMER PLANO
+     */
     protected void onResume()
     {
         //DebugLog.LOGD("ImageTargets::onResume");
@@ -378,6 +430,9 @@ public class TagInspector extends Activity {
             NativeInterfaceCaller.setProjectionMatrix();
     }
 
+    /*
+     * AL MOMENTO EN QUE LA APLICACION ENTRA EN SEGUNDO PLANO SE EJECUTA ESTE METODO
+     */
     protected void onPause()
     {
         //DebugLog.LOGD("ImageTargets::onPause");
@@ -399,6 +454,9 @@ public class TagInspector extends Activity {
         QCAR.onPause();
     }
 
+    /*
+     * ESTE METODO SE EJECUTA AL SALIR DE LA APLICACION
+     */
     protected void onDestroy()
     {
         //DebugLog.LOGD("ImageTargets::onDestroy");
@@ -451,6 +509,9 @@ public class TagInspector extends Activity {
         System.gc();
     }
 
+    /*
+     * METODO QUE INICIA LA ACTIVIDAD DE MENU EN EL MOMENTO QUE SE HACE UN TRACKING DE ALGUNA IMAGEN
+     */
     public  void onImageTrack(int trackerId){
         LoggerPrint.INFO("onImageTrack - Obteniendo el ID de la imagen");
         updateApplicationStatus(STOP_CAMERA);

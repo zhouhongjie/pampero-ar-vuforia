@@ -4,12 +4,8 @@ import com.qualcomm.ar.pl.DebugLog;
 
 
 
-/**
- * Created with IntelliJ IDEA.
- * User: Jose Manuel Aguirre
- * Date: 28/10/12
- * Time: 11:17 AM
- * To change this template use File | Settings | File Templates.
+/*
+ *CLASE USADA PARA IMPRIMIR EN EL LOGCAT
  */
 public class LoggerPrint {
     public static final String ERROR_TAG="ERROR";

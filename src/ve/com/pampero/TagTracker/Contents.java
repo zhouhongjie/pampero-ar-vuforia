@@ -1,12 +1,8 @@
 package ve.com.pampero.TagTracker;
 
-/**
- * Created with IntelliJ IDEA.
- * User: Jose Manuel Aguirre
- * Date: 30/10/12
- * Time: 02:35 PM
- * To change this template use File | Settings | File Templates.
- */
+/*
+*CLASE STATICA CON VALORES DE CONTENIDOS
+*/
 public class Contents {
     public static final int CONTENT_ID1 = 1;
     public static final int CONTENT_ID2 = 2;

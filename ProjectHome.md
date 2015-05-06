@@ -1,0 +1,1 @@
+Proyecto para desarrollo de Augmented Reality con Qualcomm Vuforia
